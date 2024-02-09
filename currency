@@ -1,0 +1,89 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class CurrencyConverterApp extends JFrame {
+    private JComboBox<String> baseCurrencyComboBox;
+    private JComboBox<String> targetCurrencyComboBox;
+    private JTextField amountTextField;
+    private JLabel resultLabel;
+
+    public CurrencyConverterApp() {
+        setTitle("Currency Converter");
+        setSize(400, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridLayout(4, 2, 10, 10));
+
+        JLabel baseCurrencyLabel = new JLabel("Base Currency:");
+        baseCurrencyComboBox = new JComboBox<>(new String[]{"USD", "EUR", "GBP", "INR"});
+        add(baseCurrencyLabel);
+        add(baseCurrencyComboBox);
+
+        JLabel targetCurrencyLabel = new JLabel("Target Currency:");
+        targetCurrencyComboBox = new JComboBox<>(new String[]{"USD", "EUR", "GBP", "INR"});
+        add(targetCurrencyLabel);
+        add(targetCurrencyComboBox);
+
+        JLabel amountLabel = new JLabel("Amount:");
+        amountTextField = new JTextField();
+        add(amountLabel);
+        add(amountTextField);
+
+        JButton convertButton = new JButton("Convert");
+        convertButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                convertCurrency();
+            }
+        });
+        add(convertButton);
+
+        JLabel resultTextLabel = new JLabel("Result:");
+        resultLabel = new JLabel();
+        add(resultTextLabel);
+        add(resultLabel);
+    }
+
+    private void convertCurrency() {
+        try {
+            double amount = Double.parseDouble(amountTextField.getText());
+            String baseCurrency = (String) baseCurrencyComboBox.getSelectedItem();
+            String targetCurrency = (String) targetCurrencyComboBox.getSelectedItem();
+
+            double exchangeRate = getExchangeRate(baseCurrency, targetCurrency);
+            double result = amount * exchangeRate;
+
+            resultLabel.setText(String.format("%.2f %s", result, targetCurrency));
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid amount. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private double getExchangeRate(String baseCurrency, String targetCurrency) {
+        // Hardcoded exchange rates for demonstration purposes
+        // In a real application, you would fetch the rates from an API
+        if (baseCurrency.equals("USD") && targetCurrency.equals("EUR")) {
+            return 0.82; // 1 USD = 0.82 EUR
+        } else if (baseCurrency.equals("USD") && targetCurrency.equals("GBP")) {
+            return 0.73; // 1 USD = 0.73 GBP
+        } else if (baseCurrency.equals("USD") && targetCurrency.equals("INR")) {
+            return 73.15; // 1 USD = 73.15 INR
+        } else if (baseCurrency.equals("EUR") && targetCurrency.equals("USD")) {
+            return 1.22; // 1 EUR = 1.22 USD
+        } else if (baseCurrency.equals("GBP") && targetCurrency.equals("USD")) {
+            return 1.37; // 1 GBP = 1.37 USD
+        } else if (baseCurrency.equals("INR") && targetCurrency.equals("USD")) {
+            return 0.014; // 1 INR = 0.014 USD
+        } else {
+            return 1.0; // Same currency, no conversion needed
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new CurrencyConverterApp().setVisible(true);
+            }
+        });
+    }
+}
